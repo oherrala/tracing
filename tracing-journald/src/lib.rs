@@ -290,9 +290,8 @@ where
             write!(buf, "{}", self.syslog_identifier).unwrap()
         });
         if let Some(facility) = self.syslog_facility {
-            put_field_length_encoded(&mut buf, "SYSLOG_FACILITY", |buf| {
-                write!(buf, "{}", facility).unwrap()
-            });
+            // Text format is safe as a u8 can't possibly contain anything funny
+            writeln!(buf, "SYSLOG_FACILITY={}", facility).unwrap();
         }
 
         event.record(&mut EventVisitor::new(

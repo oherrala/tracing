@@ -169,7 +169,8 @@ impl Subscriber {
     /// and allows filtering log messages by syslog facility with `journalctl
     /// --facility`.
     ///
-    /// See [Journal Fields](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html)
+    /// See [Syslog Message Facilities](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1),
+    /// [Journal Fields](https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html)
     /// and [journalctl](https://www.freedesktop.org/software/systemd/man/journalctl.html)
     /// for more information.
     ///

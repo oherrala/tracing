@@ -223,7 +223,8 @@ fn simple_metadata() {
     let sub = Subscriber::new()
         .unwrap()
         .with_field_prefix(None)
-        .with_syslog_identifier("test_ident".to_string());
+        .with_syslog_identifier("test_ident".to_string())
+        .with_syslog_facility(18);
     with_journald_subscriber(sub, || {
         info!(test.name = "simple_metadata", "Hello World");
 
@@ -232,6 +233,7 @@ fn simple_metadata() {
         assert_eq!(message["PRIORITY"], "5");
         assert_eq!(message["TARGET"], "journal");
         assert_eq!(message["SYSLOG_IDENTIFIER"], "test_ident");
+        assert_eq!(message["SYSLOG_FACILITY"], "18");
         assert!(message["CODE_FILE"].as_text().is_some());
         assert!(message["CODE_LINE"].as_text().is_some());
     });

@@ -85,7 +85,7 @@ pub struct Subscriber {
     socket: UnixDatagram,
     field_prefix: Option<String>,
     syslog_identifier: String,
-    syslog_facility: Option<libc::c_int>,
+    syslog_facility: Option<u8>,
 }
 
 #[cfg(unix)]
@@ -174,7 +174,7 @@ impl Subscriber {
     /// for more information.
     ///
     /// If not set, this field is left out.
-    pub fn with_syslog_facility(mut self, facility: libc::c_int) -> Self {
+    pub fn with_syslog_facility(mut self, facility: u8) -> Self {
         self.syslog_facility = Some(facility);
         self
     }
@@ -182,7 +182,7 @@ impl Subscriber {
     /// Returns the syslog facility in use.
     ///
     /// A syslog facility can be set using [`Subscriber::with_syslog_facility`].
-    pub fn syslog_facility(&self) -> Option<libc::c_int> {
+    pub fn syslog_facility(&self) -> Option<u8> {
         self.syslog_facility
     }
 
@@ -289,9 +289,9 @@ where
             write!(buf, "{}", self.syslog_identifier).unwrap()
         });
         if let Some(facility) = self.syslog_facility {
-            // libc definitions are bitshifted left by 3, but journald uses
-            // values without bitshift.
-            writeln!(buf, "SYSLOG_FACILITY={}", facility >> 3).unwrap();
+            put_field_length_encoded(&mut buf, "SYSLOG_FACILITY", |buf| {
+                write!(buf, "{}", facility).unwrap()
+            });
         }
 
         event.record(&mut EventVisitor::new(
